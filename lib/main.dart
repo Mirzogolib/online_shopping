@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import './pages/product_detail_page.dart';
 import './tools/constants.dart';
 import './pages/products_overview_page.dart';
-import './providers/products.dart'; 
+import 'providers/products_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (ctx) => Products(),
+      create: (_) => ProductsProvider(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -24,9 +24,7 @@ class MyApp extends StatelessWidget {
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato'),
         home: ProductsOverviewPage(),
-        routes: {
-          Constants.productDetailRoute: (ctx) => ProductDetailPage(title)
-        },
+        routes: {Constants.productDetailRoute: (ctx) => ProductDetailPage()},
       ),
     );
   }
