@@ -16,8 +16,21 @@ class CartProvider with ChangeNotifier {
     return total;
   }
 
+  int get totalNumbersInCart {
+    int totalQuantity = 0;
+    _items.forEach((key, value) {
+      totalQuantity += value.quantity;
+    });
+    return totalQuantity; 
+  }
+
   int get itemCount {
     return _items.length;
+  }
+
+  void removeItem(String productId){
+    _items.remove(productId);
+    notifyListeners();
   }
 
   void addItem(
@@ -46,6 +59,11 @@ class CartProvider with ChangeNotifier {
             price: price),
       );
     }
+    notifyListeners();
+  }
+
+   void clearCart(){
+    _items = {};
     notifyListeners();
   }
 }
