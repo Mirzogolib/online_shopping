@@ -21,15 +21,34 @@ class CartProvider with ChangeNotifier {
     _items.forEach((key, value) {
       totalQuantity += value.quantity;
     });
-    return totalQuantity; 
+    return totalQuantity;
   }
 
   int get itemCount {
     return _items.length;
   }
 
-  void removeItem(String productId){
+  void removeItem(String productId) {
     _items.remove(productId);
+    notifyListeners();
+  }
+
+  void removeSingleItem(String productId) {
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId].quantity > 1) {
+      _items.update(
+        productId,
+        (existingItem) => CartItem(
+            id: existingItem.id,
+            title: existingItem.title,
+            quantity: existingItem.quantity - 1,
+            price: existingItem.price),
+      );
+    } else if (_items[productId].quantity == 1) {
+      _items.remove(productId);
+    }
     notifyListeners();
   }
 
@@ -62,7 +81,7 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-   void clearCart(){
+  void clearCart() {
     _items = {};
     notifyListeners();
   }
