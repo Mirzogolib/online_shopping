@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_shopping/providers/orders_provider.dart';
+import 'package:online_shopping/widgets/app_drawer.dart';
 import 'package:online_shopping/widgets/order_item.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +14,7 @@ class OrdersPage extends StatelessWidget {
           'Your orders',
         ),
       ),
+      drawer: AppDrawer(),
       body: ListView.builder(
         itemBuilder: (ctx, i) => OrderItem(
           ordersProvider.orders[i],
