@@ -20,7 +20,7 @@ class CartItem extends StatelessWidget {
         Provider.of<CartProvider>(context, listen: false).removeItem(productId);
       },
       background: Container(
-        color: Colors.red,
+        color: Colors.red ,
         margin: EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 4,
