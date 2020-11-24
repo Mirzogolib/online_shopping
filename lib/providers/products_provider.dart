@@ -69,7 +69,8 @@ class ProductsProvider with ChangeNotifier {
 
   void addProduct(Product product) {
     final productUrl = Constants.mainAPI + 'products.json';
-    http.post(
+    http
+        .post(
       productUrl,
       body: json.encode(
         {
@@ -80,18 +81,22 @@ class ProductsProvider with ChangeNotifier {
           'isFavourite': product.isFavourite,
         },
       ),
-    );
-    final newProduct = Product(
+      //needed action when response comes
+    )
+        .then((response) {
+      final newProduct = Product(
         title: product.title,
         description: product.description,
         imageUrl: product.imageUrl,
         price: product.price,
-        id: DateTime.now().toString());
-    // inserts to end of the list
-    _items.add(newProduct);
-    // // inserts to top of the list
-    // _items.insert(0, newPro duct);
-    notifyListeners();
+        id: DateTime.now().toString(),
+      );
+      // inserts to end of the list
+      _items.add(newProduct);
+      // // inserts to top of the list
+      // _items.insert(0, newPro duct);
+      notifyListeners();
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
