@@ -78,15 +78,18 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateProduct(String id, Product newProduct){
-    final editedProductIndex = _items.indexWhere((element) => element.id==id);
-    if(editedProductIndex>=0){
+  void updateProduct(String id, Product newProduct) {
+    final editedProductIndex = _items.indexWhere((element) => element.id == id);
+    if (editedProductIndex >= 0) {
       _items[editedProductIndex] = newProduct;
       notifyListeners();
-    }else{
+    } else {
       print('product does not exist');
     }
-    
+  }
 
+  void deleteProduct(String id) {
+   _items.removeWhere((element) => element.id==id);
+   notifyListeners();
   }
 }
