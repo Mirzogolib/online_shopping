@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:online_shopping/providers/product.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:online_shopping/tools/constants.dart';
+import './product.dart';
 
 class ProductsProvider with ChangeNotifier {
   List<Product> _items = [
@@ -65,6 +68,19 @@ class ProductsProvider with ChangeNotifier {
   }
 
   void addProduct(Product product) {
+    final productUrl = Constants.mainAPI + 'products.json';
+    http.post(
+      productUrl,
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavourite': product.isFavourite,
+        },
+      ),
+    );
     final newProduct = Product(
         title: product.title,
         description: product.description,
@@ -89,7 +105,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   void deleteProduct(String id) {
-   _items.removeWhere((element) => element.id==id);
-   notifyListeners();
+    _items.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 }
