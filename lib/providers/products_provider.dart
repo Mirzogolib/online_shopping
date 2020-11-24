@@ -67,9 +67,9 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final productUrl = Constants.mainAPI + 'products.json';
-    http
+    return http
         .post(
       productUrl,
       body: json.encode(
@@ -84,18 +84,21 @@ class ProductsProvider with ChangeNotifier {
       //needed action when response comes
     )
         .then((response) {
-      final newProduct = Product(
-        title: product.title,
-        description: product.description,
-        imageUrl: product.imageUrl,
-        price: product.price,
-        id: DateTime.now().toString(),
-      );
-      // inserts to end of the list
-      _items.add(newProduct);
-      // // inserts to top of the list
-      // _items.insert(0, newPro duct);
-      notifyListeners();
+      final responseId = json.decode(response.body)['name'];
+      if (responseId != null) {
+        final newProduct = Product(
+          title: product.title,
+          description: product.description,
+          imageUrl: product.imageUrl,
+          price: product.price,
+          id: responseId,
+        );
+        // inserts to end of the list
+        _items.add(newProduct);
+        // // inserts to top of the list
+        // _items.insert(0, newPro duct);
+        notifyListeners();
+      }
     });
   }
 
