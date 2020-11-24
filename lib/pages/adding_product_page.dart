@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:online_shopping/providers/product.dart';
+import 'package:online_shopping/providers/products_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddingProductPage extends StatefulWidget {
   @override
@@ -26,6 +28,9 @@ class _AddingProductPageState extends State<AddingProductPage> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if (!_imageUrlController.text.startsWith('http')) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -41,9 +46,12 @@ class _AddingProductPageState extends State<AddingProductPage> {
   void _saveForm() {
     final isValid = _form.currentState.validate();
     if (!isValid) {
-      return;
+      return; 
     }
     _form.currentState.save();
+    Provider.of<ProductsProvider>(context, listen: false)
+        .addProduct(_editedProduct);
+        Navigator.of(context).pop();
   }
 
   @override
@@ -84,7 +92,7 @@ class _AddingProductPageState extends State<AddingProductPage> {
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
-                validator: (value) { 
+                validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter title';
                   }
@@ -92,7 +100,7 @@ class _AddingProductPageState extends State<AddingProductPage> {
                   if (double.tryParse(value) == null) {
                     return 'Please enter a valid number';
                   }
-                  if(double.parse(value)<=0){
+                  if (double.parse(value) <= 0) {
                     return 'Please enter a number grater than 0';
                   }
                   return null;
@@ -112,11 +120,11 @@ class _AddingProductPageState extends State<AddingProductPage> {
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
-                validator: (value){
-                  if(value.isEmpty){
+                validator: (value) {
+                  if (value.isEmpty) {
                     return 'Please enter a description';
                   }
-                  if(value.length>8){
+                  if (value.length < 8) {
                     return 'Description should be at least 8 characters';
                   }
                   return null;
@@ -164,6 +172,12 @@ class _AddingProductPageState extends State<AddingProductPage> {
                       textInputAction: TextInputAction.done,
                       controller: _imageUrlController,
                       focusNode: _imageUrlFocusNode,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter an image URL';
+                        }
+                        return null;
+                      },
                       onEditingComplete: () {
                         setState(() {});
                       },
