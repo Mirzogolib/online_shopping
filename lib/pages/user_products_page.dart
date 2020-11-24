@@ -12,9 +12,13 @@ class UserProductsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Your Products'),
-        actions: [IconButton(icon: Icon(Icons.add), onPressed: () {
-          Navigator.of(context).pushNamed(Constants.addingProductRoute);
-        })],
+        actions: [
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.of(context).pushNamed(Constants.addingProductRoute);
+              })
+        ],
       ),
       drawer: AppDrawer(),
       body: Padding(
@@ -23,8 +27,11 @@ class UserProductsPage extends StatelessWidget {
           itemCount: productsProvider.items.length,
           itemBuilder: (_, index) => Column(
             children: [
-              UserProductItem(productsProvider.items[index].title,
-                  productsProvider.items[index].imageUrl),
+              UserProductItem(
+                productsProvider.items[index].id,
+                productsProvider.items[index].title,
+                productsProvider.items[index].imageUrl,
+               ),
               Divider(),
             ],
           ),
