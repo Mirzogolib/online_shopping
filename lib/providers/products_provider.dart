@@ -68,7 +68,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) {
-    final productUrl = Constants.mainAPI + 'products.json';
+    final productUrl = Constants.mainAPI + 'products';
     return http
         .post(
       productUrl,
@@ -99,6 +99,8 @@ class ProductsProvider with ChangeNotifier {
         // _items.insert(0, newPro duct);
         notifyListeners();
       }
+    }).catchError((error){
+      throw error;
     });
   }
 
