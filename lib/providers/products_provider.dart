@@ -5,6 +5,7 @@ import 'package:online_shopping/tools/constants.dart';
 import './product.dart';
 
 class ProductsProvider with ChangeNotifier {
+  final productUrl = Constants.mainAPI + 'products.json';
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -68,7 +69,6 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    final productUrl = Constants.mainAPI + 'products.json';
     try {
       final response = await http.get(productUrl);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -91,8 +91,6 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final productUrl = Constants.mainAPI + 'products.json';
-
     try {
       final response = await http.post(
         productUrl,
@@ -131,11 +129,31 @@ class ProductsProvider with ChangeNotifier {
     // });
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
+    // try{
+    //   final updateProductUrl = Constants.mainAPI + 'products/$id.json';
+    //   final response = await http.patch(updateProductUrl, body: );
+    // }catch(error){
+    //   throw error;
+    // }
     final editedProductIndex = _items.indexWhere((element) => element.id == id);
     if (editedProductIndex >= 0) {
-      _items[editedProductIndex] = newProduct;
-      notifyListeners();
+      try {
+        final updateProductUrl = Constants.mainAPI + 'products/$id.json';
+        final response = await http.patch(updateProductUrl,
+            body: json.encode(
+              {
+                'title': newProduct.title,
+                'description': newProduct.description,
+                'price': newProduct.price,
+                'imageUrl': newProduct.imageUrl,
+              },
+            ));
+        _items[editedProductIndex] = newProduct;
+        notifyListeners();
+      } catch (error) {
+        throw error;
+      }
     } else {
       print('product does not exist');
     }
