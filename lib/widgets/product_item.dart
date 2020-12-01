@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:online_shopping/pages/product_detail_page.dart';
 import 'package:online_shopping/providers/cart_provider.dart';
 import 'package:online_shopping/providers/product.dart';
+import 'package:online_shopping/providers/products_provider.dart';
 import 'package:online_shopping/tools/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<CartProvider>(context, listen: false);
     return ClipRRect(
@@ -38,7 +40,18 @@ class ProductItem extends StatelessWidget {
                   ? Icons.favorite
                   : Icons.favorite_outline),
               onPressed: () {
-                product.toggleFavouriteStatus();
+                try {
+                  product.toggleFavouriteStatus();
+                } catch (error) {
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Toggle favourite failed!',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
               },
               color: Theme.of(context).accentColor,
             ),
@@ -49,7 +62,7 @@ class ProductItem extends StatelessWidget {
             ),
             onPressed: () {
               cart.addItem(product.id, product.price, product.title);
-              Scaffold.of(context).hideCurrentSnackBar(); 
+              Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
