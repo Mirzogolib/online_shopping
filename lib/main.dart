@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:online_shopping/pages/adding_product_page.dart';
-import 'package:online_shopping/pages/cart_page.dart';
-import 'package:online_shopping/pages/orders_page.dart';
-import 'package:online_shopping/pages/user_products_page.dart';
-import 'package:online_shopping/providers/cart_provider.dart';
-import 'package:online_shopping/providers/orders_provider.dart';
+import './pages/adding_product_page.dart';
+import './pages/cart_page.dart';
+import './pages/orders_page.dart';
+import './pages/user_products_page.dart';
+import './providers/cart_provider.dart';
+import './providers/orders_provider.dart';
 
 import 'package:provider/provider.dart';
 

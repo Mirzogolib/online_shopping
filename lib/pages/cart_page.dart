@@ -38,21 +38,7 @@ class CartPage extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    onPressed: () {
-                      Provider.of<OrderProvider>(context, listen: false)
-                          .addOrder(
-                        cart.items.values.toList(),
-                        cart.totalAmount,
-                      );
-                      cart.clearCart();
-                    },
-                    child: Text(
-                      'Order now',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    textColor: Theme.of(context).primaryColor,
-                  )
+                  OrderButton(cart: cart)
                 ],
               ),
             ),
@@ -73,6 +59,48 @@ class CartPage extends StatelessWidget {
           ))
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final CartProvider cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await Provider.of<OrderProvider>(context, listen: false).addOrder(
+                widget.cart.items.values.toList(),
+                widget.cart.totalAmount,
+              );
+              setState(() {
+                _isLoading = false;
+              });
+              widget.cart.clearCart();
+            },
+      child: _isLoading? CircularProgressIndicator() : Text(
+        'Order now',
+        style: TextStyle(fontSize: 14),
+      ),
+      textColor: Theme.of(context).primaryColor,
     );
   }
 }

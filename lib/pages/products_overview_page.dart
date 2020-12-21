@@ -29,7 +29,10 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      _isLoading = true;
+      setState(() {
+      _isLoading = true;        
+      });
+
       Provider.of<ProductsProvider>(context).fetchProducts().then((_) {
         setState(() {
           _isLoading = false;
