@@ -1,48 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:online_shopping/providers/orders_provider.dart';
-import 'package:online_shopping/widgets/app_drawer.dart';
-import 'package:online_shopping/widgets/order_item.dart';
 import 'package:provider/provider.dart';
 
-class OrdersPage extends StatefulWidget {
-  @override
-  _OrdersPageState createState() => _OrdersPageState();
-}
+import '../providers/orders_provider.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/order_item.dart';
 
-class _OrdersPageState extends State<OrdersPage> {
-  var _isLoading = false;
-  @override
-  void initState() {
-    Future.delayed(Duration.zero).then((_) async {
-      setState(() {
-        _isLoading = true;
-      });
-      await Provider.of<OrderProvider>(context, listen: false).fetchOrders();
-      setState(() {
-        _isLoading = false;
-      });
-    });
-    super.initState();
-  }
-
+class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final ordersProvider = Provider.of<OrderProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Your orders',
+        appBar: AppBar(
+          title: Text(
+            'Your orders',
+          ),
         ),
-      ),
-      drawer: AppDrawer(),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemBuilder: (ctx, i) => OrderItem(
-                ordersProvider.orders[i],
-              ),
-              itemCount: ordersProvider.orders.length,
-            ),
-    );
+        drawer: AppDrawer(),
+        body: FutureBuilder(
+          future:
+              Provider.of<OrderProvider>(context, listen: false).fetchOrders(),
+          builder: (ctx, dataSnapshot) {
+            if (dataSnapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              if (dataSnapshot.error != null) {
+                return Center(
+                  child: Text('An error occurred('),
+                );
+              } else {
+                Consumer<OrderProvider>(
+                  builder: (ctx, ordersProvider, child) => ListView.builder(
+                    itemBuilder: (ctx, i) => OrderItem(
+                      ordersProvider.orders[i],
+                    ),
+                    itemCount: ordersProvider.orders.length,
+                  ),
+                );
+              }
+            }
+          },
+        ));
   }
 }
