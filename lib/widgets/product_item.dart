@@ -43,7 +43,10 @@ class ProductItem extends StatelessWidget {
                   : Icons.favorite_outline),
               onPressed: () {
                 try {
-                  product.toggleFavouriteStatus(authData.token);
+                  product.toggleFavouriteStatus(
+                    authData.token,
+                    authData.userId,
+                  );
                 } catch (error) {
                   scaffold.showSnackBar(
                     SnackBar(

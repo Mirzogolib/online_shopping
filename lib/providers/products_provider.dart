@@ -43,8 +43,9 @@ class ProductsProvider with ChangeNotifier {
   ];
 
   final String token;
+  final String userId;
 
-  ProductsProvider(this.token, this._items);
+  ProductsProvider(this.token, this.userId,this._items);
 
   // var _isFavouriteNeeded = false;
 
@@ -78,6 +79,10 @@ class ProductsProvider with ChangeNotifier {
       final response = await http.get('$productUrl?auth=$token');
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+      final favouriteUrl = Constants.mainAPI + 'favourites/$userId.json?auth=$token';
+      final favouriteResponse = await http.get(favouriteUrl);
+      final favouriteData = json.decode(favouriteResponse.body);
+
       extractedData.forEach((key, value) {
         loadedProducts.add(Product(
           id: key,
@@ -85,7 +90,7 @@ class ProductsProvider with ChangeNotifier {
           price: value['price'],
           description: value['description'],
           imageUrl: value['imageUrl'],
-          isFavourite: value['isFavourite'],
+          isFavourite: favouriteData == null? false: favouriteData[key] ?? false,
         ));
       });
       _items = loadedProducts;
@@ -105,7 +110,7 @@ class ProductsProvider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavourite': product.isFavourite,
+            // 'isFavourite': product.isFavourite,
           },
         ),
         //needed action when response comes

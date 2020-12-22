@@ -22,17 +22,16 @@ class Product with ChangeNotifier {
     this.isFavourite = false,
   });
 
-  Future<void> toggleFavouriteStatus(String token) async {
-    final updateProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
+  Future<void> toggleFavouriteStatus(String token, String userId) async {
+    final updateProductUrl =
+        Constants.mainAPI + 'favourites/$userId/$id.json?auth=$token';
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
     try {
-      final response = await http.patch(updateProductUrl,
+      final response = await http.put(updateProductUrl,
           body: json.encode(
-            {
-              'isFavourite': isFavourite,
-            },
+            isFavourite,
           ));
       if (response.statusCode >= 400) {
         isFavourite = oldStatus;
