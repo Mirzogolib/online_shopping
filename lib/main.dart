@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:online_shopping/providers/auth_notifier.dart';
 import './pages/adding_product_page.dart';
 import './pages/cart_page.dart';
 import './pages/orders_page.dart';
@@ -12,6 +13,7 @@ import './pages/product_detail_page.dart';
 import './tools/constants.dart';
 import './pages/products_overview_page.dart';
 import 'providers/products_provider.dart';
+import './pages/auth_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,6 +25,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => AuthProvider(),
+        ),
         ChangeNotifierProvider(
           create: (ctx) => ProductsProvider(),
         ),
@@ -39,13 +44,13 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.purple,
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato'),
-        home: ProductsOverviewPage(),
+        home: AuthScreen(),
         routes: {
           Constants.productDetailRoute: (ctx) => ProductDetailPage(),
           Constants.cartRoute: (ctx) => CartPage(),
-          Constants.orderRoute: (ctx) => OrdersPage(), 
-          Constants.userProductsRoute: (ctx) => UserProductsPage (), 
-          Constants.addingProductRoute: (ctx) => AddingProductPage (), 
+          Constants.orderRoute: (ctx) => OrdersPage(),
+          Constants.userProductsRoute: (ctx) => UserProductsPage(),
+          Constants.addingProductRoute: (ctx) => AddingProductPage(),
         },
       ),
     );
