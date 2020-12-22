@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:online_shopping/models/http_exception.dart';
 import 'package:online_shopping/providers/auth_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -102,6 +103,22 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showErrorDialog(String message) {
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text('An error occured'),
+              content: Text(message),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Okay'))
+              ],
+            ));
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
@@ -111,15 +128,23 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-      await Provider.of<AuthProvider>(context, listen: false)
-          .signIn(_authData['email'], _authData['password']);
-    } else {
-      // Sign user up
-      await Provider.of<AuthProvider>(context, listen: false)
-          .signUp(_authData['email'], _authData['password']);
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<AuthProvider>(context, listen: false)
+            .signIn(_authData['email'], _authData['password']);
+      } else {
+        // Sign user up
+        await Provider.of<AuthProvider>(context, listen: false)
+            .signUp(_authData['email'], _authData['password']);
+      }
+    } on HttpException catch (error) {
+      _showErrorDialog(error.message);
+    } catch (error) {
+      const errorMessage = 'Could not authonticate';
+      _showErrorDialog(errorMessage);
     }
+
     setState(() {
       _isLoading = false;
     });
