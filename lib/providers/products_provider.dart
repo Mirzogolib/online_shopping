@@ -42,6 +42,10 @@ class ProductsProvider with ChangeNotifier {
     // ),
   ];
 
+  final String token;
+
+  ProductsProvider(this.token, this._items);
+
   // var _isFavouriteNeeded = false;
 
   // void showFavouritesOnly(){
@@ -71,7 +75,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     try {
-      final response = await http.get(productUrl);
+      final response = await http.get('$productUrl?auth=$token');
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       extractedData.forEach((key, value) {
@@ -94,7 +98,7 @@ class ProductsProvider with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     try {
       final response = await http.post(
-        productUrl,
+        '$productUrl?auth=$token',
         body: json.encode(
           {
             'title': product.title,
@@ -130,7 +134,6 @@ class ProductsProvider with ChangeNotifier {
     // });
   }
 
-
   Future<void> updateProduct(String id, Product newProduct) async {
     // try{
     //   final updateProductUrl = Constants.mainAPI + 'products/$id.json';
@@ -141,7 +144,7 @@ class ProductsProvider with ChangeNotifier {
     final editedProductIndex = _items.indexWhere((element) => element.id == id);
     if (editedProductIndex >= 0) {
       try {
-        final updateProductUrl = Constants.mainAPI + 'products/$id.json';
+        final updateProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
         final response = await http.patch(updateProductUrl,
             body: json.encode(
               {
@@ -162,7 +165,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final deleteProductUrl = Constants.mainAPI + 'products/$id.json';
+    final deleteProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];

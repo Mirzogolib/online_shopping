@@ -22,8 +22,8 @@ class Product with ChangeNotifier {
     this.isFavourite = false,
   });
 
-  Future<void> toggleFavouriteStatus() async {
-    final updateProductUrl = Constants.mainAPI + 'products/$id.json';
+  Future<void> toggleFavouriteStatus(String token) async {
+    final updateProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();

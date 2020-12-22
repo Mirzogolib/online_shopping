@@ -27,7 +27,7 @@ class OrdersPage extends StatelessWidget {
                   child: Text('An error occurred('),
                 );
               } else {
-                Consumer<OrderProvider>(
+                return Consumer<OrderProvider>(
                   builder: (ctx, ordersProvider, child) => ListView.builder(
                     itemBuilder: (ctx, i) => OrderItem(
                       ordersProvider.orders[i],

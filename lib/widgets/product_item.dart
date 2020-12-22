@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_shopping/pages/product_detail_page.dart';
+import 'package:online_shopping/providers/auth_provider.dart';
 import 'package:online_shopping/providers/cart_provider.dart';
 import 'package:online_shopping/providers/product.dart';
 import 'package:online_shopping/providers/products_provider.dart';
@@ -18,6 +19,7 @@ class ProductItem extends StatelessWidget {
     final scaffold = Scaffold.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<CartProvider>(context, listen: false);
+    final authData = Provider.of<AuthProvider>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -41,7 +43,7 @@ class ProductItem extends StatelessWidget {
                   : Icons.favorite_outline),
               onPressed: () {
                 try {
-                  product.toggleFavouriteStatus();
+                  product.toggleFavouriteStatus(authData.token);
                 } catch (error) {
                   scaffold.showSnackBar(
                     SnackBar(
