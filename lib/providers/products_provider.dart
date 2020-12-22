@@ -45,7 +45,7 @@ class ProductsProvider with ChangeNotifier {
   final String token;
   final String userId;
 
-  ProductsProvider(this.token, this.userId,this._items);
+  ProductsProvider(this.token, this.userId, this._items);
 
   // var _isFavouriteNeeded = false;
 
@@ -74,12 +74,15 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts([bool filterByUser = false]) async {
     try {
-      final response = await http.get('$productUrl?auth=$token');
+      final filterString =
+          filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+      final response = await http.get('$productUrl?auth=$token$filterString');
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
-      final favouriteUrl = Constants.mainAPI + 'favourites/$userId.json?auth=$token';
+      final favouriteUrl =
+          Constants.mainAPI + 'favourites/$userId.json?auth=$token';
       final favouriteResponse = await http.get(favouriteUrl);
       final favouriteData = json.decode(favouriteResponse.body);
 
@@ -90,7 +93,8 @@ class ProductsProvider with ChangeNotifier {
           price: value['price'],
           description: value['description'],
           imageUrl: value['imageUrl'],
-          isFavourite: favouriteData == null? false: favouriteData[key] ?? false,
+          isFavourite:
+              favouriteData == null ? false : favouriteData[key] ?? false,
         ));
       });
       _items = loadedProducts;
@@ -110,7 +114,7 @@ class ProductsProvider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            // 'isFavourite': product.isFavourite,
+            'creatorId': userId,
           },
         ),
         //needed action when response comes
@@ -149,7 +153,8 @@ class ProductsProvider with ChangeNotifier {
     final editedProductIndex = _items.indexWhere((element) => element.id == id);
     if (editedProductIndex >= 0) {
       try {
-        final updateProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
+        final updateProductUrl =
+            Constants.mainAPI + 'products/$id.json?auth=$token';
         final response = await http.patch(updateProductUrl,
             body: json.encode(
               {
@@ -170,7 +175,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final deleteProductUrl = Constants.mainAPI + 'products/$id.json?auth=$token';
+    final deleteProductUrl =
+        Constants.mainAPI + 'products/$id.json?auth=$token';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
