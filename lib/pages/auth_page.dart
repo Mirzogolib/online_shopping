@@ -102,6 +102,14 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  AnimationController _controller;
+  Animation<Size> _hieghtAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    
+  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -112,7 +120,7 @@ class _AuthCardState extends State<AuthCard> {
               actions: [
                 FlatButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(ctx).pop();
                     },
                     child: Text('Okay'))
               ],
@@ -131,15 +139,35 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Provider.of<AuthProvider>(context, listen: false)
-            .signIn(_authData['email'], _authData['password']);
+        try {
+          await Provider.of<AuthProvider>(context, listen: false).signIn(
+            _authData['email'],
+            _authData['password'],
+          );
+        } catch (error) {
+          print('there is error');
+        }
       } else {
         // Sign user up
-        await Provider.of<AuthProvider>(context, listen: false)
-            .signUp(_authData['email'], _authData['password']);
+        await Provider.of<AuthProvider>(context, listen: false).signUp(
+          _authData['email'],
+          _authData['password'],
+        );
       }
     } on HttpException catch (error) {
-      _showErrorDialog(error.message);
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
+      }
+      _showErrorDialog(errorMessage);
     } catch (error) {
       const errorMessage = 'Could not authonticate';
       _showErrorDialog(errorMessage);

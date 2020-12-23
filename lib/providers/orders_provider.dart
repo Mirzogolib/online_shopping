@@ -9,14 +9,15 @@ import 'package:online_shopping/widgets/order_item.dart';
 class OrderProvider with ChangeNotifier {
   List<Order> _orders = [];
   final String authToken;
-  OrderProvider(this.authToken, this._orders);
+  final String userId;
+  OrderProvider(this.authToken, this.userId, this._orders);
 
   List<Order> get orders {
     return [..._orders];
   }
 
   Future<void> fetchOrders() async {
-    final url = Constants.mainAPI + 'orders.json?auth=$authToken';
+    final url = Constants.mainAPI + 'orders/$userId.json?auth=$authToken';
     final response = await http.get(url);
     final List<Order> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -49,7 +50,7 @@ class OrderProvider with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double totalPrice) async {
-    final url = Constants.mainAPI + 'orders.json?auth=$authToken';
+    final url = Constants.mainAPI + 'orders/$userId.json?auth=$authToken';
     final timeStamp = DateTime.now();
     final response = await http.post(
       url,

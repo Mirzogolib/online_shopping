@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:online_shopping/pages/splash_page.dart';
 import 'package:online_shopping/providers/auth_provider.dart';
 import './pages/adding_product_page.dart';
 import './pages/cart_page.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
           update: (ctx, authProvider, orderProvider) => OrderProvider(
             authProvider.token,
+            authProvider.userId,
             orderProvider == null ? [] : orderProvider.orders,
           ),
           create: (ctx) => null,
@@ -53,7 +55,15 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.purple,
               accentColor: Colors.deepOrange,
               fontFamily: 'Lato'),
-          home: authProvider.isAuth ? ProductsOverviewPage() : AuthScreen(),
+          home: authProvider.isAuth
+              ? ProductsOverviewPage()
+              : FutureBuilder(
+                  future: authProvider.canAutoLogIn(),
+                  builder: (ctx, authResult) =>
+                      authResult.connectionState == ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen(),
+                ),
           routes: {
             Constants.productDetailRoute: (ctx) => ProductDetailPage(),
             Constants.cartRoute: (ctx) => CartPage(),
