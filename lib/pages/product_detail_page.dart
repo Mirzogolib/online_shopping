@@ -66,7 +66,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ), 
     );
   }
 }
